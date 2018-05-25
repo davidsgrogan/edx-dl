@@ -715,7 +715,12 @@ def download_url(url, filename, headers, args):
         # order) is due to different behaviors in different Python versions
         # (e.g., 2.7 vs. 3.4).
         try:
-            urlretrieve(url, filename)
+            #urlretrieve(url, filename)
+            # -R preserves original timestamps but omitting it is better so you know what files go with what videos. update: this is of dubious value. I don't see a benefit either way.
+            cookie_jar = 'edx_curl_cookies'
+            cmd = ['curl', '--create-dirs', '-b', cookie_jar, '-c', cookie_jar, '-o', filename, url]
+            # args is only used for ignoring errors here
+            execute_command(cmd, args)
         except Exception as e:
             logging.warn('Got SSL/Connection error: %s', e)
             if not args.ignore_errors:
